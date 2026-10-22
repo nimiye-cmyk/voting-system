@@ -1,4 +1,4 @@
-import withAuth from "next-auth/middleware"; //  FIXED: Import as default object instead of { withAuth }
+import { withAuth } from "next-auth/next"; //  FIXED: Import from the root next-auth package for Next.js 16 compatibility
 import { NextResponse } from "next/server";
 
 export default withAuth(
@@ -6,12 +6,12 @@ export default withAuth(
     const token = req.nextauth.token;
     const isAuthPage = req.nextUrl.pathname.startsWith("/auth");
 
-    // 1. If trying to access the admin portal, strictly verify role properties
+    // 1. Admin route protection gate rule
     if (req.nextUrl.pathname.startsWith("/admin") && token?.role !== "admin") {
       return NextResponse.redirect(new URL("/auth/login?error=UnauthorizedAdmin", req.url));
     }
 
-    // 2. If logged in, block them from looping back to login/accreditation screens
+    // 2. Redirect logged-in students away from login screens
     if (isAuthPage && token) {
       return NextResponse.redirect(new URL("/Voting", req.url));
     }
@@ -26,7 +26,7 @@ export default withAuth(
   }
 );
 
-// Lock down your specific application page tracks
+// Protect your specific voting system layout pages
 export const config = {
   matcher: [
     "/Voting/:path*", 
