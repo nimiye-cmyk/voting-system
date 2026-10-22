@@ -1,4 +1,4 @@
-import { withAuth } from "next-auth/middleware";
+import withAuth from "next-auth/middleware"; //  FIXED: Import as default object instead of { withAuth }
 import { NextResponse } from "next/server";
 
 export default withAuth(
@@ -18,16 +18,15 @@ export default withAuth(
   },
   {
     callbacks: {
-      // Returns true if a session token exists, authorizing basic access
       authorized: ({ token }) => !!token,
     },
     pages: {
-      signIn: "/auth/login", // Fallback gate destination for unauthenticated sessions
+      signIn: "/auth/login",
     },
   }
 );
 
-// 🔒 CRITICAL CONFIG: Specify exactly which page tracks are locked down
+// Lock down your specific application page tracks
 export const config = {
   matcher: [
     "/Voting/:path*", 
